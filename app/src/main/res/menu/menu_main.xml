@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".VolunteerHomeActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+    <item
+        android:id="@+id/activity_a"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:title="@string/activity_a" />
+    <item
+        android:id="@+id/activity_b"
+        android:orderInCategory="101"
+        app:showAsAction="never"
+        android:title="@string/activity_b" />
+    <item
+        android:id="@+id/activity_c"
+        android:orderInCategory="102"
+        app:showAsAction="never"
+        android:title="@string/activity_c" />
+
+    <item
+        android:id="@+id/activity_d"
+        android:orderInCategory="103"
+        app:showAsAction="never"
+        android:title="@string/activity_d" />
+
+</menu>

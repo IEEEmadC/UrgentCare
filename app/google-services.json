@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "652400080036",
+    "firebase_url": "https://e-charger-196317.firebaseio.com",
+    "project_id": "e-charger-196317",
+    "storage_bucket": "e-charger-196317.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:652400080036:android:4ff78b5c0407909e",
+        "android_client_info": {
+          "package_name": "com.example.peterbrayo.urgentcare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "652400080036-m6p0i8up6m2cfhigvg706ho3tj0gbtoc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.peterbrayo.urgentcare",
+            "certificate_hash": "c7b1661359e5f22d61aab5b8128045a9e4a9516c"
+          }
+        },
+        {
+          "client_id": "652400080036-h3r9ps04krb2nkbjavj3rcrk9vgupulr.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "652400080036-h3r9ps04krb2nkbjavj3rcrk9vgupulr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI8T2JlkNgqY9T1YVYCwDw1GyT0B9pmF4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "652400080036-h3r9ps04krb2nkbjavj3rcrk9vgupulr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/email_popup"
+    android:background="@drawable/popup_background"
+    >
+
+
+    <EditText
+        android:id="@+id/editEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="164dp"
+        android:ems="10"
+        android:hint="@string/hint_new_email"
+        android:inputType="textEmailAddress" />
+
+    <Button
+        android:id="@+id/saveNewEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editEmail"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/my_button"
+        android:text="@string/change_email" />
+
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:visibility="gone"
+        android:background="@drawable/progressbackground"/>
+
+
+
+
+</RelativeLayout>
