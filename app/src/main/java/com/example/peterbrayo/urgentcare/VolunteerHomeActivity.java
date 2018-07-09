@@ -25,6 +25,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.json.JSONObject;
+
 public class VolunteerHomeActivity extends AppCompatActivity {
     private PopupWindow mPopupWindow;
     private RelativeLayout mRelativeLayout;
@@ -41,6 +43,8 @@ public class VolunteerHomeActivity extends AppCompatActivity {
 
         //get firebase auth instance
         auth = FirebaseAuth.getInstance();
+
+
 
         //get current user
           user = FirebaseAuth.getInstance().getCurrentUser();
@@ -183,6 +187,8 @@ public class VolunteerHomeActivity extends AppCompatActivity {
         } else if(id == R.id.activity_d){
             return true;
         }
+
+
 
 
         return super.onOptionsItemSelected(item);
