@@ -45,6 +45,7 @@ public class VolunteerHomeActivity extends AppCompatActivity {
         //get current user
           user = FirebaseAuth.getInstance().getCurrentUser();
 
+
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
