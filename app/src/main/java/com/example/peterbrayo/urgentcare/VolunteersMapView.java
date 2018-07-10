@@ -27,7 +27,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class VolunteersMapView extends FragmentActivity implements OnMapReadyCallback {
@@ -35,26 +37,17 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
     private static final String TAG = VolunteersMapView.class.getSimpleName();
     private HashMap<String, Marker> mMarkers = new HashMap<>();
     private GoogleMap mMap;
-//    FirebaseUser user;
-//    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volunteers_map_view);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-//        user = FirebaseAuth.getInstance().getCurrentUser();
-//        auth = FirebaseAuth.getInstance();
-//        if(user != null){
-//            auth.signOut();
-//        }
-
-
     }
-
 
     /**
      * Manipulates the map once available.
@@ -68,11 +61,6 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-//        LatLng sydney = new LatLng(-34, 151);
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.setMaxZoomPreference(16);
         Log.i(TAG, "onMapReady: ");
         loginToFirebase();
@@ -80,7 +68,8 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
 
     private void subscribeToUpdates() {
         Log.i(TAG, "subscribeToUpdates()");
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(getString(R.string.firebase_path));
+        String path = getString(R.string.firebase_path);
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
@@ -135,80 +124,40 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
     }
 
     private void setMarker(DataSnapshot dataSnapshot) {
-        // When a location update is received, put or update
-        // its value in mMarkers, which contains all the markers
-        // for locations received, so that we can build the
-        // boundaries required to show them all on the map at once
-        String key = dataSnapshot.getKey();
-       // VolunteerLocation volLocation = dataSnapshot.getValue(VolunteerLocation.class);
-        // HashMap<String, Object> value = (HashMap<String, Object>) dataSnapshot.getValue();
-//        double lat = Double.parseDouble(value.get("latitude").toString());
-//        double lng = Double.parseDouble(value.get("lo\ngitude").toString());
-//
-//        LatLng location = new LatLng(lat, lng);
-        Log.i(TAG, "dataSnapshot.getKey(): "+ dataSnapshot.getChildrenCount());
+
+
+
+        Log.i(TAG, "dataSnapshot.getKey(): " + dataSnapshot.getChildrenCount());
         LatLng location;
 
-       // if(dataSnapshot.hasChild("latitude") && dataSnapshot.hasChild("longitude")) {
-         //   location = new LatLng(volLocation.getLatitude(), volLocation.getLongitude());
 
-        if(dataSnapshot.child(getString(R.string.firebase_path)).exists())
-            Log.i("if", "this is the if");
-            location = new LatLng(Double.parseDouble(dataSnapshot.child("latitude").getValue().toString()), Double.parseDouble(dataSnapshot.child("longitude").getValue().toString()));
+        Iterable<DataSnapshot> users = dataSnapshot.getChildren();
 
-//        else {
-//            Log.i("else","this is the else");
-//            location = new LatLng(0.3661242, 32.4653001);
-//        }
-       // }
-       // LatLng location = new LatLng(0.3661242, 0.3661242);
-        // if data not in Hashmap
-       // if (!mMarkers.containsKey(key)) {
-            //create new marker
-        //location = new LatLng(0.3661242, 0.3661242);
-        Log.i(TAG, "markerOptions");
+        for (DataSnapshot ds : users) {
+            Log.i("children",ds.getKey());
+            double lat = Double.parseDouble(ds.child("location").child("latitude").getValue().toString());
+            double lon = Double.parseDouble(ds.child("location").child("longitude").getValue().toString());
+
+            location = new LatLng(lat, lon);
+
+
+
+            Log.i(TAG, "markerOptions");
             MarkerOptions markerOptions = new MarkerOptions();
 
             //set marker properties
-           // markerOptions.title(key);
+            markerOptions.title("put any thing here");
             markerOptions.position(location);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
 
-            // add marker to map and store in mMarkers-Hashmap
-           // Marker marker = mMap.addMarker(markerOptions);
-        mMap.addMarker(markerOptions);
-          // mMarkers.put(key, marker);
-       // } else {
-            // else get data and set location on map
-          //  mMarkers.get(key).setPosition(location);
-      //  }
+            // add marker to map
 
-        // create boundaries for markers
-//        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//        for (Marker marker : mMarkers.values()) {
-//            builder.include(marker.getPosition());
-//        }
-//        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 300));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+            mMap.addMarker(markerOptions);
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+
+        }
     }
 
-    public void displayMakers(){
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(getString(R.string.firebase_path));
-        double lat = Double.parseDouble(ref.child("latitude").toString());
-        double lon = Double.parseDouble(ref.child("longitude").toString());
 
-        LatLng location = new LatLng(lat,lon);
-
-
-
-        MarkerOptions markerOptions = new MarkerOptions();
-
-        //set marker properties
-        // markerOptions.title(key);
-        markerOptions.position(location);
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mMap.addMarker(markerOptions);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-
-    }
 }

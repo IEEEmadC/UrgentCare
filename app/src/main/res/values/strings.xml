@@ -40,7 +40,7 @@
     <string name="tracking_enabled_notif">Tracking is currently enabled. Tap to cancel.</string>
     <string name="test_email">test@test.com</string>
     <string name="test_password">testpassword</string>
-    <string name="firebase_path">location</string>
+    <string name="firebase_path">Users</string>
     <string name="notification_text">Tracking, tap to cancel</string>
     <string name="title_activity_volunteers_map_view">Map</string>
     <string name="map_view">Map View</string>
@@ -48,4 +48,6 @@
     <string name="firebase_email">pbwauyo@gmail.com</string>
     <string name="firebase_password">platinum87</string>
     <string name="transport_id" translatable="false">123</string>
+    <string name="Contact">Contact</string>
+    <string name="Name">Name</string>
 </resources>

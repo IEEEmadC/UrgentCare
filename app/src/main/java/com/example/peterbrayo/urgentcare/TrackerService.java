@@ -10,6 +10,7 @@ import com.google.android.gms.location.LocationServices;
 //import com.google.firebase.auth.AuthResult;
 //import com.google.firebase.auth.FirebaseAuth;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -44,7 +45,6 @@ public class TrackerService extends Service {
         super.onCreate();
         buildNotification();
         requestLocationUpdates();
-        //loginToFirebase();
     }
 
     @SuppressWarnings("deprecation")
@@ -73,25 +73,9 @@ public class TrackerService extends Service {
         }
     };
 
-//    private void loginToFirebase() {
-//        // Authenticate with Firebase, and request location updates
-//        String email = getString(R.string.firebase_email);
-//        String password = getString(R.string.firebase_password);
-//        FirebaseAuth.getInstance().signInWithEmailAndPassword(
-//                email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>(){
-//            @Override
-//            public void onComplete(Task<AuthResult> task) {
-//                if (task.isSuccessful()) {
-//                    Log.d(TAG, "firebase auth success");
-//                    requestLocationUpdates();
-//                } else {
-//                    Log.d(TAG, "firebase auth failed");
-//                }
-//            }
-//        });
-//    }
 
     private void requestLocationUpdates() {
+        FirebaseAuth auth  = FirebaseAuth.getInstance();
         LocationRequest request = new LocationRequest();
 
 //Specify how app should request the device’s location//
@@ -103,7 +87,8 @@ public class TrackerService extends Service {
 
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
-        final String path = getString(R.string.firebase_path) + "/" + getString(R.string.transport_id);
+        String userId =auth.getCurrentUser().getUid();
+        final String path = getString(R.string.firebase_path) + "/" + userId + "/location";
         int permission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
 
@@ -121,20 +106,19 @@ public class TrackerService extends Service {
 
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference(path);
                     Location location = locationResult.getLastLocation();
+                    VolunteerLocation volLocation =  new VolunteerLocation(location.getLatitude(), location.getLongitude());
 
                     //LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-                    if (location != null) {
+                    if (volLocation.exists()) {
 
 //Save the location data to the database//
 
-                        ref.setValue(location);
+                        ref.setValue(volLocation);
                     }
                 }
             }, null);
         }
     }
-
-
     }
 
 

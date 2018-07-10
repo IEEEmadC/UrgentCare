@@ -68,11 +68,7 @@ public class SignUpActivity extends AppCompatActivity {
                 String password = inputPassword.getText().toString().trim();
 
                 //adding user object
-                Users users=new Users(Name,email,Contact);
-                users.setName(Name);
-                users.setEmail(email);
-                users.setContact(Contact);
-                reference.child("Users").push().setValue(users);
+
 
 
                 if (TextUtils.isEmpty(Contact)) {
@@ -113,10 +109,17 @@ public class SignUpActivity extends AppCompatActivity {
                                 // If sign in fails, display a message to the user. If sign in succeeds
                                 // the auth state listener will be notified and logic to handle the
                                 // signed in user can be handled in the listener.
+
                                 if (!task.isSuccessful()) {
                                     Toast.makeText(SignUpActivity.this, "Authentication failed." + task.getException(),
                                             Toast.LENGTH_SHORT).show();
-                                } else { startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+                                } else {
+                                    //get current created user's ID
+                                    String userId =auth.getCurrentUser().getUid();
+
+                                    //save user to Firebase Database using ID
+                                    saveUserToFirebase(Name,email, Contact, userId, reference);
+                                    startActivity(new Intent(SignUpActivity.this, MainActivity.class));
                                     finish();
                                 }
                             }
@@ -130,5 +133,10 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         progressBar.setVisibility(View.GONE);
+    }
+
+    void saveUserToFirebase(String name, String email, String contact, String Id, DatabaseReference ref){
+        Users users = new Users(name, email, contact);
+        ref.child("Users").child(Id).setValue(users);
     }
 }
