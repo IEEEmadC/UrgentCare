@@ -72,7 +72,7 @@ public class Subscriber extends AppCompatActivity {
         }
 
         else if(id == R.id.volunteer_list_view){
-
+            startActivity(new Intent(Subscriber.this, VolunteerListView.class));
         }
 
 

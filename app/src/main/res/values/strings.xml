@@ -50,4 +50,6 @@
     <string name="transport_id" translatable="false">123</string>
     <string name="Contact">Contact</string>
     <string name="Name">Name</string>
+    <string name="kampala">Kampala, Uganda</string>
+    <string name="loading">loading...</string>
 </resources>

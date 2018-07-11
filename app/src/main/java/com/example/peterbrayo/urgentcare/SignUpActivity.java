@@ -62,20 +62,17 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                final String Contact=inputContact.getText().toString().trim();
-                final String Name=inputName.getText().toString().trim();
+                final String contact=inputContact.getText().toString().trim();
+                final String name=inputName.getText().toString().trim();
                 final String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
 
                 //adding user object
-
-
-
-                if (TextUtils.isEmpty(Contact)) {
+                if (TextUtils.isEmpty(contact)) {
                     Toast.makeText(getApplicationContext(), "Enter Contact!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (TextUtils.isEmpty(Name)) {
+                if (TextUtils.isEmpty(name)) {
                     Toast.makeText(getApplicationContext(), "Enter Name!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -118,7 +115,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     String userId =auth.getCurrentUser().getUid();
 
                                     //save user to Firebase Database using ID
-                                    saveUserToFirebase(Name,email, Contact, userId, reference);
+                                    saveUserToFirebase(name,email, contact, userId, reference);
                                     startActivity(new Intent(SignUpActivity.this, MainActivity.class));
                                     finish();
                                 }
@@ -136,7 +133,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     void saveUserToFirebase(String name, String email, String contact, String Id, DatabaseReference ref){
-        Users users = new Users(name, email, contact);
+        Users users = new Users(email, name, contact);
         ref.child("Users").child(Id).setValue(users);
     }
 }

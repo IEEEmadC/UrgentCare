@@ -2,52 +2,120 @@ package com.example.peterbrayo.urgentcare;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.view.ViewGroup.LayoutParams;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.os.Build;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-import org.json.JSONObject;
+import java.io.ByteArrayOutputStream;
+
 
 public class VolunteerHomeActivity extends AppCompatActivity {
     private PopupWindow mPopupWindow;
-    private RelativeLayout mRelativeLayout;
     FirebaseUser user;
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
-
+    DatabaseReference ref;
+    TextView userName;
+    TextView userEmail;
+    TextView userContact;
+    TextView userLocation;
+    ImageView editPhoto;
+    ImageView profilePic;
+    private static final int REQUEST_IMAGE_CAPTURE = 111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volunteer_home);
 
+        userName = findViewById(R.id.name);
+        userEmail = findViewById(R.id.email);
+        userContact = findViewById(R.id.contact);
+        userLocation = findViewById(R.id.location);
+        profilePic = findViewById(R.id.profile);
+        editPhoto = findViewById(R.id.edit_photo);
 
         //get firebase auth instance
         auth = FirebaseAuth.getInstance();
 
-
-
         //get current user
-          user = FirebaseAuth.getInstance().getCurrentUser();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        final String userID = user.getUid();
+
+        //get database reference
+        ref = FirebaseDatabase.getInstance().getReference();
+        ref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.i("children", "dataSnapshot.getKey(): " + dataSnapshot.getChildrenCount());
+                String name = dataSnapshot.child(userID).child("name").getValue().toString();
+                String email = dataSnapshot.child(userID).child("email").getValue().toString();
+                String contact = dataSnapshot.child(userID).child("contact").getValue().toString();
+
+                userName.setText(name);
+                userEmail.setText(email);
+                userContact.setText(contact);
+                userLocation.setText(R.string.kampala);
+
+                if(dataSnapshot.child(userID).child("imageUrl").exists()) {
+                    String imageUrl = dataSnapshot.child(userID).child("imageUrl").getValue().toString();
+                    Bitmap imageBitmap = decodeFromFirebaseBase64(imageUrl);
+                    profilePic.setImageBitmap(getResizedBitmap(imageBitmap, 200,200));
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
         authListener = new FirebaseAuth.AuthStateListener() {
@@ -62,16 +130,25 @@ public class VolunteerHomeActivity extends AppCompatActivity {
                 }
             }
 
+
+
     };
 
     auth.addAuthStateListener(authListener);
+
+    editPhoto.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            onLaunchCamera();
+        }
+    });
+
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //user = FirebaseAuth.getInstance().getCurrentUser();
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -86,13 +163,9 @@ public class VolunteerHomeActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.activity_a) {
-            //Do something
 
             //We need to get the instance of the LayoutInflater, use the context of this activity
             LayoutInflater inflater = (LayoutInflater) VolunteerHomeActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            // Initialize a new instance of LayoutInflater service
-          //  LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
 
             // Inflate the custom layout/view
             View customView = inflater.inflate(R.layout.change_email,null);
@@ -110,8 +183,6 @@ public class VolunteerHomeActivity extends AppCompatActivity {
                         width : the popup's width
                         height : the popup's height
                 */
-            // Initialize a new instance of popup window
-           // mPopupWindow = new PopupWindow(customView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
             //Get the devices screen density to calculate correct pixel sizes
             float density=VolunteerHomeActivity.this.getResources().getDisplayMetrics().density;
@@ -188,14 +259,64 @@ public class VolunteerHomeActivity extends AppCompatActivity {
             return true;
         }
 
-
-
-
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String userID = auth.getUid();
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == VolunteerHomeActivity.RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            profilePic.setImageBitmap(imageBitmap);
+            encodeBitmapAndSaveToFirebase(imageBitmap, userID);
+        }
     }
 
     public void signOut() {
         auth.signOut();
+    }
+
+    public void onLaunchCamera(){
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    public void encodeBitmapAndSaveToFirebase(Bitmap bitmap, String userID) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+
+        DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child("Users")
+                .child(userID).child("imageUrl");
+        dr.setValue(imageEncoded);
+    }
+
+    public static Bitmap decodeFromFirebaseBase64(String image){
+        byte[] decodedByteArray = android.util.Base64.decode(image, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
+    }
+
+
+    //method to scale image on ImageView
+    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
     }
 
 }
