@@ -1,8 +1,12 @@
 package com.example.peterbrayo.urgentcare;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,9 +53,22 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyHold
 
         //decode image-url in firebase from string to bitmap
         Bitmap imageBitmap = decodeFromFirebaseBase64(user.getImage());
-
+        final String phoneNum = user.getContact();
         holder.nameTxt.setText(user.getName());
-        holder.phoneTxt.setText(user.getContact());
+        holder.phoneTxt.setText(phoneNum);
+
+        holder.phoneTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + phoneNum));
+                if (ActivityCompat.checkSelfPermission(view.getContext(),
+                        android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                view.getContext().startActivity(callIntent);
+            }
+        });
         holder.img.setImageBitmap(getResizedBitmap(imageBitmap, 200,220));
         holder.ratingBar.setRating(user.getRating());
     }

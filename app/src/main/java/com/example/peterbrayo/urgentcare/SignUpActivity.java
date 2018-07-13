@@ -22,7 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 public class SignUpActivity extends AppCompatActivity {
 
     private EditText inputEmail, inputPassword,inputName,inputContact;
-    private Button btnSignIn, btnSignUp;
     private ProgressBar progressBar;
     private FirebaseAuth auth;
     private DatabaseReference reference;
@@ -38,13 +37,13 @@ public class SignUpActivity extends AppCompatActivity {
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
 
-        btnSignIn = (Button) findViewById(R.id.sign_in_button);
-        btnSignUp = (Button) findViewById(R.id.sign_up_button);
-        inputEmail = (EditText) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
-        inputName=(EditText)findViewById(R.id.Name);
-        inputContact=(EditText)findViewById(R.id.Contact);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        Button btnSignIn = findViewById(R.id.sign_in_button);
+        Button btnSignUp = findViewById(R.id.sign_up_button);
+        inputEmail = findViewById(R.id.email);
+        inputPassword = findViewById(R.id.password);
+        inputName=findViewById(R.id.Name);
+        inputContact=findViewById(R.id.Contact);
+        progressBar = findViewById(R.id.progressBar);
 
         //get firebase reference
         reference=FirebaseDatabase.getInstance().getReference();
@@ -116,7 +115,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                                     //save user to Firebase Database using ID
                                     saveUserToFirebase(name,email, contact, userId, reference);
-                                    startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+                                    startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
                                     finish();
                                 }
                             }

@@ -1,10 +1,13 @@
 package com.example.peterbrayo.urgentcare;
 
+import android.content.Intent;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -47,6 +50,27 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //user = FirebaseAuth.getInstance().getCurrentUser();
+        getMenuInflater().inflate(R.menu.subscriber_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if(id == R.id.volunteer_list_view){
+            startActivity(new Intent(VolunteersMapView.this, VolunteerListView.class));
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -135,28 +159,31 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
 
         for (DataSnapshot ds : users) {
             Log.i("children",ds.getKey());
-            double lat = Double.parseDouble(ds.child("location").child("latitude").getValue().toString());
-            double lon = Double.parseDouble(ds.child("location").child("longitude").getValue().toString());
+
+                double lat = Double.parseDouble(ds.child("location").child("latitude").getValue().toString());
+                double lon = Double.parseDouble(ds.child("location").child("longitude").getValue().toString());
+                String name = ds.child("name").getValue().toString();
 
             location = new LatLng(lat, lon);
-
-
 
             Log.i(TAG, "markerOptions");
             MarkerOptions markerOptions = new MarkerOptions();
 
             //set marker properties
-            markerOptions.title("put any thing here");
+            markerOptions.title(name).alpha(0.7f);
             markerOptions.position(location);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
 
             // add marker to map
-
             mMap.addMarker(markerOptions);
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+            mMarkers.put(name,  mMap.addMarker(markerOptions));
 
         }
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : mMarkers.values()) {
+            builder.include(marker.getPosition());
+        }
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 300));
     }
 
 

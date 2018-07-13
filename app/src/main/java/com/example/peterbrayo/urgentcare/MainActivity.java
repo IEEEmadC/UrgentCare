@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     RadioGroup userType;
@@ -16,18 +17,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        userType = (RadioGroup)findViewById(R.id.userType);
-        done = (Button)findViewById(R.id.done);
+        userType = findViewById(R.id.userType);
+        done = findViewById(R.id.done);
 
         done.setOnClickListener(new View.OnClickListener(){
             @Override
                     public void onClick(View v){
                 if(userType.getCheckedRadioButtonId()==R.id.subscriber){
-                    startActivity(new Intent(MainActivity.this, Subscriber.class));
+                    startActivity(new Intent(MainActivity.this, VolunteerListView.class));
 
                 }
-                else{
+                else if(userType.getCheckedRadioButtonId()==R.id.volunteer)
+                {
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                }
+                else{
+                    Toast.makeText(MainActivity.this,"Please select an option",Toast.LENGTH_SHORT).show();
                 }
             }
         });
