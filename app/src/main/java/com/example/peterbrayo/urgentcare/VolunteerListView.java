@@ -17,6 +17,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -38,10 +39,10 @@ public class VolunteerListView extends AppCompatActivity {
             rv.setLayoutManager(mLayoutManager);
 
 
-        ref = FirebaseDatabase.getInstance().getReference();
-        ref.addChildEventListener(new ChildEventListener() {
+        ref = FirebaseDatabase.getInstance().getReference().child("volunteers");
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.i("children: ", "has" + dataSnapshot.getChildrenCount());
                 UsersFromFirebase usersFromFirebase = new UsersFromFirebase(dataSnapshot);
                 arrayList = usersFromFirebase.getUsersFromFirebase();
@@ -50,29 +51,9 @@ public class VolunteerListView extends AppCompatActivity {
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    UsersFromFirebase usersFromFirebase = new UsersFromFirebase(dataSnapshot);
-                    arrayList = usersFromFirebase.getUsersFromFirebase();
-                    Log.i("onchildchanged", arrayList.get(0).getContact());
-                    rv.setAdapter(new RecyclerAdapter(VolunteerListView.this, arrayList));
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
-
     }
 
     @Override

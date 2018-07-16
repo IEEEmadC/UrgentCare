@@ -35,6 +35,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 
@@ -74,11 +75,15 @@ public class VolunteerHomeActivity extends AppCompatActivity {
         final String userID = user.getUid();
 
         //get database reference
-        ref = FirebaseDatabase.getInstance().getReference();
-        ref.addChildEventListener(new ChildEventListener() {
+        ref = FirebaseDatabase.getInstance().getReference().child("volunteers");
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.i("children", "dataSnapshot.getKey(): " + dataSnapshot.getChildrenCount());
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.i("childrenz", "dataSnapshot children: " + dataSnapshot.getChildrenCount());
+                Iterable<DataSnapshot> iterable = dataSnapshot.getChildren();
+                for(DataSnapshot dataSnapshot1: iterable) {
+                    Log.i("Has child?", dataSnapshot1.getValue().toString() + "");
+                }
                 String name = dataSnapshot.child(userID).child("name").getValue().toString();
                 String email = dataSnapshot.child(userID).child("email").getValue().toString();
                 String contact = dataSnapshot.child(userID).child("contact").getValue().toString();
@@ -96,25 +101,30 @@ public class VolunteerHomeActivity extends AppCompatActivity {
 
             }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                Log.i("onChildChanged", dataSnapshot.getChildrenCount()+"");
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+@Override
+public void onCancelled(DatabaseError databaseError) {
+    System.out.println("The read failed: " + databaseError.getCode());
+}
         });
 
 
@@ -252,7 +262,13 @@ public class VolunteerHomeActivity extends AppCompatActivity {
 
 
             return true;
-        } else if (id == R.id.activity_b) {
+        }
+        else if(id == R.id.chat_item){
+            Intent intent = new Intent(VolunteerHomeActivity.this, ChatActivity.class);
+            startActivity(intent);
+        }
+
+        else if (id == R.id.activity_b) {
             //Do something
             return true;
         } else if (id == R.id.activity_c) {
@@ -294,7 +310,7 @@ public class VolunteerHomeActivity extends AppCompatActivity {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
 
-        DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child("Users")
+        DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child("volunteers")
                 .child(userID).child("imageUrl");
         dr.setValue(imageEncoded);
     }

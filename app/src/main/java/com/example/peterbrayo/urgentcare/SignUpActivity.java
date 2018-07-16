@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -112,6 +114,10 @@ public class SignUpActivity extends AppCompatActivity {
                                 } else {
                                     //get current created user's ID
                                     String userId =auth.getCurrentUser().getUid();
+                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                            .setDisplayName(name).build();
+
+                                    auth.getCurrentUser().updateProfile(profileUpdates);
 
                                     //save user to Firebase Database using ID
                                     saveUserToFirebase(name,email, contact, userId, reference);
@@ -133,6 +139,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     void saveUserToFirebase(String name, String email, String contact, String Id, DatabaseReference ref){
         Users users = new Users(email, name, contact);
-        ref.child("Users").child(Id).setValue(users);
+        ref.child("volunteers").child(Id).setValue(users);
     }
 }

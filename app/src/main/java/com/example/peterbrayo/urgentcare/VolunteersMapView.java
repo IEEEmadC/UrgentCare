@@ -1,8 +1,10 @@
 package com.example.peterbrayo.urgentcare;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +31,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,10 +39,12 @@ import java.util.Map;
 
 
 public class VolunteersMapView extends FragmentActivity implements OnMapReadyCallback {
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     private static final String TAG = VolunteersMapView.class.getSimpleName();
     private HashMap<String, Marker> mMarkers = new HashMap<>();
     private GoogleMap mMap;
+    private Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +55,8 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
     }
 
 
@@ -87,44 +94,29 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
         mMap = googleMap;
         mMap.setMaxZoomPreference(16);
         Log.i(TAG, "onMapReady: ");
+        setUpMap();
         loginToFirebase();
     }
 
     private void subscribeToUpdates() {
         Log.i(TAG, "subscribeToUpdates()");
         String path = getString(R.string.firebase_path);
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        ref.addChildEventListener(new ChildEventListener() {
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("volunteers");
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 Log.i("getRef()", ref.toString());
                 //Log.i("refParent", ref.getParent().toString());
 //                Log.i("getRef()", ref.getKey());
                 if(dataSnapshot.exists())
                     setMarker(dataSnapshot);
-
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
-                Log.i(TAG, "onChildChanged");
-                if(dataSnapshot.exists())
-                setMarker(dataSnapshot);
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.d(TAG, "Failed to read value.", error.toException());
-            }
         });
     }
 
@@ -186,5 +178,16 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 300));
     }
 
+    private void setUpMap() {
+        if (ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]
+                    {android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        }
+        else{
+            // this will display the blue dot on the map representing your current location
+            mMap.setMyLocationEnabled(true);
+        }
+    }
 
 }

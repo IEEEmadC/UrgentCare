@@ -4,7 +4,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
@@ -22,11 +26,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignUpActivity" android:label="Create New Account"/>
-        <activity android:name=".LoginActivity" android:label="Login"/>
-        <activity android:name=".ResetPasswordActivity" android:label="Reset Password"/>
-        <activity android:name=".VolunteerHomeActivity" android:label="Profile"/>
-        <activity android:name=".MainActivity" android:label="Select User"/>
+        <activity
+            android:name=".SignUpActivity"
+            android:label="Create New Account" />
+        <activity
+            android:name=".LoginActivity"
+            android:label="Login" />
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:label="Reset Password" />
+        <activity
+            android:name=".VolunteerHomeActivity"
+            android:label="Profile" />
+        <activity
+            android:name=".MainActivity"
+            android:label="Select User" />
 
         <service
             android:name=".TrackerService"
@@ -49,7 +63,12 @@
         <activity
             android:name=".VolunteersMapView"
             android:label="@string/title_activity_volunteers_map_view" />
-        <activity android:name=".VolunteerListView"/>
+        <activity
+            android:name=".VolunteerListView"
+            android:label="Available Volunteers" />
+        <activity
+            android:name=".ChatActivity"
+            android:label="Chat Screen" />
     </application>
 
 </manifest>
