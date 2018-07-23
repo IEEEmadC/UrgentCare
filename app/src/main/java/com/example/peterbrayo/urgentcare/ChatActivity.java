@@ -143,8 +143,6 @@ public class ChatActivity extends AppCompatActivity{
                 }
 
                viewHolder.messengerTextView.setText(message.getSender());
-//
-//                    viewHolder.messengerImageView.setImageDrawable(ContextCompat.getDrawable(ChatActivity.this, R.drawable.ic_account_circle_black_36dp));
 
             }
         }; //end adapter
@@ -180,16 +178,11 @@ public class ChatActivity extends AppCompatActivity{
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String sender = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("name").getValue().toString();
-                    //String text;
-                    //if(mMessageEditText.getText() != null) {
                     String text = mMessageEditText.getText().toString().trim();
-                    // }
 
-                    //if(text != null) {
                     ChatMessages chatMessages = new ChatMessages(text, sender, null);
                     FirebaseDatabase.getInstance().getReference().child("messages").push().setValue(chatMessages);
                     mMessageEditText.setText("");
-                    //  }
                 }
 
                 @Override

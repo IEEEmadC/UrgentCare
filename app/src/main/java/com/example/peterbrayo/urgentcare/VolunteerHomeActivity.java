@@ -145,7 +145,6 @@ public void onCancelled(DatabaseError databaseError) {
     };
 
     auth.addAuthStateListener(authListener);
-
     editPhoto.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {

@@ -46,6 +46,11 @@
             android:name=".TrackerService"
             android:enabled="true"
             android:exported="true" />
+        <service android:name=".NotificationService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <activity android:name=".TrackerActivity" />
         <!--
@@ -69,6 +74,16 @@
         <activity
             android:name=".ChatActivity"
             android:label="Chat Screen" />
+        <activity
+            android:name=".AccidentMapActivity"
+            android:label="@string/title_activity_accident_map" />
+        <activity android:name=".ReplyActivity"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.custom"
+            android:label="@string/title_activity_notification"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:launchMode="singleInstance"
+            android:excludeFromRecents="true" />
     </application>
 
 </manifest>

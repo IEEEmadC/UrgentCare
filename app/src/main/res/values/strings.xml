@@ -55,4 +55,11 @@
     <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
     <string name="send">SEND</string>
     <string name="chat">Chats</string>
+    <string name="send_notifications">Send Notifications</string>
+    <string name="send_photo">Send Photo</string>
+    <string name="title_activity_accident_map">Accident Location</string>
+    <string name="send_msg">Send</string>
+    <string name="cancel">Cancel</string>
+    <string name="hint">reply to sender</string>
+    <string name="title_activity_notification">Reply Notification</string>
 </resources>

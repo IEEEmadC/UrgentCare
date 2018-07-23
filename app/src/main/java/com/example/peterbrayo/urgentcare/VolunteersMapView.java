@@ -39,12 +39,10 @@ import java.util.Map;
 
 
 public class VolunteersMapView extends FragmentActivity implements OnMapReadyCallback {
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-
+    static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final String TAG = VolunteersMapView.class.getSimpleName();
     private HashMap<String, Marker> mMarkers = new HashMap<>();
     private GoogleMap mMap;
-    private Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

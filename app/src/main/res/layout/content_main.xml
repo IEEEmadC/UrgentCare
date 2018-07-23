@@ -8,11 +8,33 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".VolunteerListView">
-    <!--tools:showIn="@layout/activity_volunteer_list_view">-->
+
+    <Button
+        android:id="@+id/sendNotifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
+        android:text="@string/send_notifications" />
+
+    <Button
+        android:id="@+id/sendPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/send_photo"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/sendNotifications"
+        android:layout_marginStart="16dp"
+        />
+
 
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/sendNotifications"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
+
+
 </RelativeLayout>
