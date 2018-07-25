@@ -62,8 +62,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyHold
             public void onClick(View view) {
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
                 callIntent.setData(Uri.parse("tel:" + phoneNum));
-                if (ActivityCompat.checkSelfPermission(view.getContext(),
-                        android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(view.getContext(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
                 view.getContext().startActivity(callIntent);

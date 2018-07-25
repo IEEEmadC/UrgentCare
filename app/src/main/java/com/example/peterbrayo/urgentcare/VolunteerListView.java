@@ -196,18 +196,22 @@ public class VolunteerListView extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == VolunteerHomeActivity.RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            Bitmap resizedBitmap = getResizedBitmap(imageBitmap,75,75);
-            encodeBitmapAndSaveToFirebase(resizedBitmap);
+            //Bitmap resizedBitmap = getResizedBitmap(imageBitmap,400,300);
+            encodeBitmapAndSaveToSharedPreferences(imageBitmap);
         }
     }
 
-    public void encodeBitmapAndSaveToFirebase(Bitmap bitmap) {
+    public void encodeBitmapAndSaveToSharedPreferences(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
         double latitude = Double.longBitsToDouble(sharedPreferences.getLong("latitude",Double.doubleToRawLongBits( 0.3656516)));
         double longitude =  Double.longBitsToDouble(sharedPreferences.getLong("longitude",Double.doubleToRawLongBits( 32.5685592)));
         NotificationModel notificationModel = new NotificationModel(null, latitude,longitude,imageEncoded);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("accidentPhoto", imageEncoded);
+        editor.apply();
 
         //save image to firebase
         FirebaseDatabase.getInstance().getReference().child("imageNotifications").setValue(notificationModel);

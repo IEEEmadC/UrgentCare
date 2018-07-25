@@ -2,6 +2,7 @@ package com.example.peterbrayo.urgentcare;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -53,6 +54,8 @@ public class VolunteerHomeActivity extends AppCompatActivity {
     ImageView editPhoto;
     ImageView profilePic;
     private static final int REQUEST_IMAGE_CAPTURE = 111;
+    SharedPreferences sharedPreferences;
+    String LOCATION = "location";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,8 @@ public class VolunteerHomeActivity extends AppCompatActivity {
         userLocation = findViewById(R.id.location);
         profilePic = findViewById(R.id.profile);
         editPhoto = findViewById(R.id.edit_photo);
+
+        sharedPreferences = getSharedPreferences(LOCATION, Context.MODE_PRIVATE);
 
         //get firebase auth instance
         auth = FirebaseAuth.getInstance();

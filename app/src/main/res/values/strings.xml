@@ -60,6 +60,8 @@
     <string name="title_activity_accident_map">Accident Location</string>
     <string name="send_msg">Send</string>
     <string name="cancel">Cancel</string>
-    <string name="hint">reply to sender</string>
+    <string name="hint" >reply to sender</string>
     <string name="title_activity_notification">Reply Notification</string>
+    <string name="action_reply"><![CDATA[<b><font color=#128c7e>Reply</font></b>]]></string>
+    <string name="action_call"><![CDATA[<b><font color=#128c7e>Call</font></b>]]></string>
 </resources>
