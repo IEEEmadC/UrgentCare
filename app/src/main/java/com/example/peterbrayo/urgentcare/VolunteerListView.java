@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.location.Location;
 import android.location.LocationManager;
 import android.provider.MediaStore;
@@ -35,7 +34,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
@@ -79,23 +77,20 @@ public class VolunteerListView extends AppCompatActivity {
         if (permission == PackageManager.PERMISSION_GRANTED) {
             LocationRequest request = new LocationRequest();
 
-//Specify how app should request the device’s location//
-
+        //Specify how app should request the device’s location//
             request.setInterval(10000);
             request.setFastestInterval(5000);
 
-//Get the most accurate location data available//
-
+        //Get the most accurate location data available//
             request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
 
-//...then request location updates//
-
+        //...then request location updates//
                 client.requestLocationUpdates(request, new LocationCallback() {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
 
-//Get a reference to the database, to perform read and write operations//
+        //Get a reference to the database, to perform read and write operations//
                         Location location = locationResult.getLastLocation();
 
                         editor.putLong("latitude", Double.doubleToRawLongBits(location.getLatitude()));
@@ -138,10 +133,7 @@ public class VolunteerListView extends AppCompatActivity {
         double longitude =  Double.longBitsToDouble(sharedPreferences.getLong("longitude",Double.doubleToRawLongBits( 32.5685592)));
         notificationModel =  new NotificationModel(message,latitude, longitude, null);
 
-        //LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-
-
-//Save the location data to the database//
+        //Save the location data to the database//
             sendNotifications.setOnClickListener(new View.OnClickListener() {
                                                      @Override
                                                      public void onClick(View view) {
@@ -160,8 +152,6 @@ public class VolunteerListView extends AppCompatActivity {
                 }
             });
         }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -215,23 +205,6 @@ public class VolunteerListView extends AppCompatActivity {
 
         //save image to firebase
         FirebaseDatabase.getInstance().getReference().child("imageNotifications").setValue(notificationModel);
-    }
-
-    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        // CREATE A MATRIX FOR THE MANIPULATION
-        Matrix matrix = new Matrix();
-        // RESIZE THE BIT MAP
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        // "RECREATE" THE NEW BITMAP
-        Bitmap resizedBitmap = Bitmap.createBitmap(
-                bm, 0, 0, width, height, matrix, false);
-        bm.recycle();
-        return resizedBitmap;
     }
 
 }

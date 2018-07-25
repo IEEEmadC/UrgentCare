@@ -1,14 +1,11 @@
 package com.example.peterbrayo.urgentcare;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,8 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -25,34 +20,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
 import java.io.ByteArrayOutputStream;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatActivity extends AppCompatActivity{
@@ -60,7 +37,6 @@ public class ChatActivity extends AppCompatActivity{
     private static final String TAG = "ChatActivity";
     public static final String MESSAGES_CHILD = "messages";
     private static final int REQUEST_IMAGE_CAPTURE = 111;
-    private DatabaseReference mFirebaseDatabaseReference;
 
     Button mSendButton;
     EditText mMessageEditText;
@@ -86,9 +62,10 @@ public class ChatActivity extends AppCompatActivity{
     private LinearLayoutManager mLinearLayoutManager;
     private RecyclerView mMessageRecyclerView;
     private ProgressBar mProgressBar;
+    SharedPreferences sharedPreferences;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_final_chat);
 
@@ -100,10 +77,28 @@ public class ChatActivity extends AppCompatActivity{
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
         mProgressBar = findViewById(R.id.chatProgressBar);
 
+        String LOCATION = "location";
+        sharedPreferences = getSharedPreferences(LOCATION, Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
 
+        final String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // New child entries
-        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        mFirebaseDatabaseReference.child("volunteers").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String profilePic = dataSnapshot.child(userId).child("imageUrl").getValue().toString();
+                editor.putString("userDp", profilePic);
+                editor.apply();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         SnapshotParser<ChatMessages> parser = new SnapshotParser<ChatMessages>() {
             @Override
@@ -137,12 +132,19 @@ public class ChatActivity extends AppCompatActivity{
                     viewHolder.messageImageView.setVisibility(ImageView.GONE);
                 }
                 else if (message.getImage() != null) {
-                    viewHolder.messageImageView.setImageBitmap(getResizedBitmap(decodeFromFirebaseBase64(message.getImage()),150,150));
+
+                    viewHolder.messageImageView.setImageBitmap(UtilityFunctions.getResizedBitmap(UtilityFunctions.decodeFromFirebaseBase64(message.getImage()),150,150));
                     viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
                     viewHolder.messageTextView.setVisibility(TextView.GONE);
                 }
 
                viewHolder.messengerTextView.setText(message.getSender());
+                String dp = sharedPreferences.getString("userDp","");
+                if(!dp.equals("")){
+                    Bitmap userPic = UtilityFunctions.decodeFromFirebaseBase64(dp);
+                    Bitmap circularDp = UtilityFunctions.getCircleBitmap(UtilityFunctions.getResizedBitmap(userPic, 400,400));
+                    viewHolder.messengerImageView.setImageBitmap(circularDp);
+                }
 
             }
         }; //end adapter
@@ -255,26 +257,5 @@ public class ChatActivity extends AppCompatActivity{
         });
     }
 
-    public static Bitmap decodeFromFirebaseBase64(String image){
-        byte[] decodedByteArray = android.util.Base64.decode(image, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
-    }
 
-    //method to scale image on ImageView
-    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        // CREATE A MATRIX FOR THE MANIPULATION
-        Matrix matrix = new Matrix();
-        // RESIZE THE BIT MAP
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        // "RECREATE" THE NEW BITMAP
-        Bitmap resizedBitmap = Bitmap.createBitmap(
-                bm, 0, 0, width, height, matrix, false);
-        bm.recycle();
-        return resizedBitmap;
-    }
 }

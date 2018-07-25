@@ -5,7 +5,6 @@ public class VolunteerMessage {
     private String id;
     private String text;
     private String name;
-   // private String photoUrl;
     private String imageUrl;
 
     public VolunteerMessage() {
@@ -14,7 +13,6 @@ public class VolunteerMessage {
     public VolunteerMessage(String text, String name, String imageUrl) {
         this.text = text;
         this.name = name;
-        //this.photoUrl = photoUrl;
         this.imageUrl = imageUrl;
     }
 
@@ -42,14 +40,6 @@ public class VolunteerMessage {
         this.name = name;
     }
 
-//    public String getPhotoUrl() {
-//        return photoUrl;
-//    }
-//
-//    public void setPhotoUrl(String photoUrl) {
-//        this.photoUrl = photoUrl;
-////    }
-//
     public String getImageUrl() {
         return imageUrl;
     }

@@ -5,10 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -26,12 +24,10 @@ import android.view.View;
 import android.os.Build;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +35,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
+
+import static com.example.peterbrayo.urgentcare.UtilityFunctions.getResizedBitmap;
 
 
 public class VolunteerHomeActivity extends AppCompatActivity {
@@ -101,31 +99,12 @@ public class VolunteerHomeActivity extends AppCompatActivity {
                 if(dataSnapshot.child(userID).child("imageUrl").exists()) {
                     String imageUrl = dataSnapshot.child(userID).child("imageUrl").getValue().toString();
                     Bitmap imageBitmap = decodeFromFirebaseBase64(imageUrl);
-                    profilePic.setImageBitmap(getResizedBitmap(imageBitmap, 200,200));
+                    Bitmap cicularDp = UtilityFunctions.getCircleBitmap(imageBitmap);
+                    profilePic.setImageBitmap(getResizedBitmap(cicularDp, 200,200));
                 }
 
             }
 
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                Log.i("onChildChanged", dataSnapshot.getChildrenCount()+"");
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
 @Override
 public void onCancelled(DatabaseError databaseError) {
     System.out.println("The read failed: " + databaseError.getCode());
@@ -276,7 +255,7 @@ public void onCancelled(DatabaseError databaseError) {
             //Do something
             return true;
         } else if (id == R.id.activity_c) {
-            //Do something
+            //sign out current user
             signOut();
             return true;
         } else if(id == R.id.activity_d){
@@ -322,25 +301,6 @@ public void onCancelled(DatabaseError databaseError) {
     public static Bitmap decodeFromFirebaseBase64(String image){
         byte[] decodedByteArray = android.util.Base64.decode(image, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
-    }
-
-
-    //method to scale image on ImageView
-    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        // CREATE A MATRIX FOR THE MANIPULATION
-        Matrix matrix = new Matrix();
-        // RESIZE THE BIT MAP
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        // "RECREATE" THE NEW BITMAP
-        Bitmap resizedBitmap = Bitmap.createBitmap(
-                bm, 0, 0, width, height, matrix, false);
-        bm.recycle();
-        return resizedBitmap;
     }
 
 }

@@ -1,14 +1,9 @@
 package com.example.peterbrayo.urgentcare;
 
-import android.graphics.Bitmap;
 import android.util.Log;
-
 import com.google.firebase.database.DataSnapshot;
-
 import java.util.ArrayList;
 import java.util.Random;
-
-import static com.example.peterbrayo.urgentcare.VolunteerHomeActivity.decodeFromFirebaseBase64;
 
 public class UsersFromFirebase {
 

@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,11 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
-
 import java.util.ArrayList;
-
+import static com.example.peterbrayo.urgentcare.UtilityFunctions.getResizedBitmap;
 import static com.example.peterbrayo.urgentcare.VolunteerHomeActivity.decodeFromFirebaseBase64;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyHolder> {
@@ -36,6 +34,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyHold
     INITIALIZE VIEWHOLDER
      */
 
+    @NonNull
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Log.i("oncreateview",parent.toString());
@@ -97,24 +96,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyHold
             img =  userDetails.findViewById(R.id.profile_picture);
             ratingBar =  userDetails.findViewById(R.id.ratingBarID);
         }
-    }
-
-    //method to scale image on ImageView
-    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        // CREATE A MATRIX FOR THE MANIPULATION
-        Matrix matrix = new Matrix();
-        // RESIZE THE BIT MAP
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        // "RECREATE" THE NEW BITMAP
-        Bitmap resizedBitmap = Bitmap.createBitmap(
-                bm, 0, 0, width, height, matrix, false);
-        bm.recycle();
-        return resizedBitmap;
     }
 
 }

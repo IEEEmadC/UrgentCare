@@ -1,22 +1,17 @@
 package com.example.peterbrayo.urgentcare;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.app.RemoteInput;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import static com.example.peterbrayo.urgentcare.VolunteersMapView.LOCATION_PERMISSION_REQUEST_CODE;
 
@@ -33,25 +28,6 @@ public class AccidentMapActivity extends FragmentActivity implements OnMapReadyC
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-
-        Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
-        String KEY_WITHOUT_REPLY = "key_withoutPic_reply";
-
-        if(remoteInput != null){
-            CharSequence charSequence = remoteInput.getCharSequence(KEY_WITHOUT_REPLY);
-
-            if (charSequence != null) {
-                String reply = charSequence.toString();
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("replies").child("reply");
-                ref.setValue(reply);
-            }
-        }
 
     }
 

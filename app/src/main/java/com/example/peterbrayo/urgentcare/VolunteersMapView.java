@@ -2,7 +2,6 @@ package com.example.peterbrayo.urgentcare;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -10,8 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -25,18 +22,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-
 
 public class VolunteersMapView extends FragmentActivity implements OnMapReadyCallback {
     static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -61,7 +52,6 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //user = FirebaseAuth.getInstance().getCurrentUser();
         getMenuInflater().inflate(R.menu.subscriber_menu, menu);
         return true;
     }
@@ -99,14 +89,13 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
     private void subscribeToUpdates() {
         Log.i(TAG, "subscribeToUpdates()");
         String path = getString(R.string.firebase_path);
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("volunteers");
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(path);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 Log.i("getRef()", ref.toString());
-                //Log.i("refParent", ref.getParent().toString());
-//                Log.i("getRef()", ref.getKey());
+
                 if(dataSnapshot.exists())
                     setMarker(dataSnapshot);
             }
@@ -121,6 +110,7 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
     private void loginToFirebase() {
         String email = getString(R.string.firebase_email);
         String password = getString(R.string.firebase_password);
+
         // Authenticate with Firebase and subscribe to updates
         FirebaseAuth.getInstance().signInWithEmailAndPassword(
                 email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
