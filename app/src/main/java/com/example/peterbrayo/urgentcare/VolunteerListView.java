@@ -47,7 +47,6 @@ public class VolunteerListView extends AppCompatActivity {
     Button sendPhoto;
     DatabaseReference notificationsRef;
     SharedPreferences sharedPreferences;
-    NotificationModel notificationModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +58,9 @@ public class VolunteerListView extends AppCompatActivity {
         rv = findViewById(R.id.recycler_view);
         sendNotifications = findViewById(R.id.sendNotifications);
         sendPhoto = findViewById(R.id.sendPhoto);
-        notificationsRef = FirebaseDatabase.getInstance().getReference().child("notifications");
+        notificationsRef = FirebaseDatabase.getInstance().getReference().child("textNotifications").child("txt");
         String LOCATION = "location";
         sharedPreferences = getSharedPreferences(LOCATION, Context.MODE_PRIVATE);
-        final SharedPreferences.Editor editor = sharedPreferences.edit();
 
         // Check GPS is enabled
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -92,10 +90,9 @@ public class VolunteerListView extends AppCompatActivity {
 
         //Get a reference to the database, to perform read and write operations//
                         Location location = locationResult.getLastLocation();
+                        AccidentLocationModel locationModel = new AccidentLocationModel(location.getLatitude(),location.getLongitude());
+                        FirebaseDatabase.getInstance().getReference().child("accidentLocation").setValue(locationModel);
 
-                        editor.putLong("latitude", Double.doubleToRawLongBits(location.getLatitude()));
-                        editor.putLong("longitude", Double.doubleToRawLongBits(location.getLongitude()));
-                        editor.apply();
                     }
                 }, null);
 
@@ -128,19 +125,13 @@ public class VolunteerListView extends AppCompatActivity {
         });
 
 
-        String message = "Accident has happened here. Please make it as soon as possible";
-        double latitude = Double.longBitsToDouble(sharedPreferences.getLong("latitude",Double.doubleToRawLongBits( 0.3656516)));
-        double longitude =  Double.longBitsToDouble(sharedPreferences.getLong("longitude",Double.doubleToRawLongBits( 32.5685592)));
-        notificationModel =  new NotificationModel(message,latitude, longitude, null);
+        final String message = "Accident has happened here. Please make it as soon as possible";
 
-        //Save the location data to the database//
             sendNotifications.setOnClickListener(new View.OnClickListener() {
                                                      @Override
                                                      public void onClick(View view) {
-                                                         if (notificationModel.exists()) {
-                                                             notificationsRef.setValue(notificationModel);
+                                                             notificationsRef.setValue(message);
                                                              Toast.makeText(VolunteerListView.this, "Notification Message Sent Successfully", Toast.LENGTH_SHORT).show();
-                                                         }
                                                      }
                                                  }
             );
@@ -195,16 +186,9 @@ public class VolunteerListView extends AppCompatActivity {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
-        double latitude = Double.longBitsToDouble(sharedPreferences.getLong("latitude",Double.doubleToRawLongBits( 0.3656516)));
-        double longitude =  Double.longBitsToDouble(sharedPreferences.getLong("longitude",Double.doubleToRawLongBits( 32.5685592)));
-        NotificationModel notificationModel = new NotificationModel(null, latitude,longitude,imageEncoded);
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("accidentPhoto", imageEncoded);
-        editor.apply();
 
         //save image to firebase
-        FirebaseDatabase.getInstance().getReference().child("imageNotifications").setValue(notificationModel);
+        FirebaseDatabase.getInstance().getReference().child("imageNotifications").child("imageUrl").setValue(imageEncoded);
     }
 
 }

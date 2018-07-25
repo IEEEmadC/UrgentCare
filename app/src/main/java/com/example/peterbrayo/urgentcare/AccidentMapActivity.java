@@ -3,6 +3,7 @@ package com.example.peterbrayo.urgentcare;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -12,6 +13,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import static com.example.peterbrayo.urgentcare.VolunteersMapView.LOCATION_PERMISSION_REQUEST_CODE;
 
@@ -47,14 +52,33 @@ public class AccidentMapActivity extends FragmentActivity implements OnMapReadyC
 
         String LOCATION = "location";
         sharedPreferences = getSharedPreferences(LOCATION, Context.MODE_PRIVATE);
+
+        FirebaseDatabase.getInstance().getReference().child("accidentLocation").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String latitude = dataSnapshot.child("latitude").getValue().toString();
+                String longitude = dataSnapshot.child("longitude").getValue().toString();
+
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("latitude",latitude);
+                editor.putString("longitude", longitude);
+                editor.apply();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         String message = "Accident has happened here";
-        double latitude = Double.longBitsToDouble(sharedPreferences.getLong("latitude",Double.doubleToRawLongBits( 0.3656516)));
-        double longitude =  Double.longBitsToDouble(sharedPreferences.getLong("longitude",Double.doubleToRawLongBits( 32.5685592)));
+        double latitude = Double.parseDouble(sharedPreferences.getString("latitude", "0.3656516"));
+        double longitude =  Double.parseDouble(sharedPreferences.getString("longitude", "32.5685592"));
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(latitude, longitude);
-        mMap.addMarker(new MarkerOptions().position(sydney).title(message));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng location = new LatLng(latitude, longitude);
+        mMap.addMarker(new MarkerOptions().position(location).title(message));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
     }
 
     private void setUpMap() {

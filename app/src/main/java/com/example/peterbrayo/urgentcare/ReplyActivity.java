@@ -1,5 +1,6 @@
 package com.example.peterbrayo.urgentcare;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -61,11 +62,23 @@ public class ReplyActivity extends AppCompatActivity {
         cancel = findViewById(R.id.buttonCancel);
         text = findViewById(R.id.sendFeedback);
 
+        final String name = sharedPreferences.getString("replyName", "Anonymous");
+        final String contact = sharedPreferences.getString("replyContact", "0700000000");
+        final String image = sharedPreferences.getString("replyImage", "");
+
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("replies");
                 String reply = text.getText().toString();
-                FirebaseDatabase.getInstance().getReference().child("replies").child("reply").setValue(reply);
+                if(!image.equals("")){
+                    ref.setValue(new ReplyModel(name, contact, image,reply));
+
+                }
+                else{
+                    ref.setValue(new ReplyModel(name, contact,null,reply));
+                }
+
                 startActivity(new Intent(ReplyActivity.this, AccidentMapActivity.class));
             }
         });
