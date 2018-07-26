@@ -4,15 +4,24 @@ public class ChatMessages {
     private  String text;
     private  String sender;
     private   String image;
+    private String profilePic;
 
     ChatMessages(){}
 
 
-    ChatMessages(String text, String sender, String image) {
+    ChatMessages(String text, String sender, String image, String profilePic) {
         this.text = text;
         this.sender = sender;
         this.image = image;
+        this.profilePic = profilePic;
+    }
 
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
     }
 
     public String getText() {

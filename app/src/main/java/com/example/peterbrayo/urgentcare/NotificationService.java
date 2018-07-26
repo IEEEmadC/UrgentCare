@@ -40,7 +40,6 @@ public class NotificationService extends FirebaseMessagingService {
         Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.notification_logo);
         Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
         Bitmap circularBitmap = getCircleBitmap(bitmap);
-
         Intent resultIntent = new Intent(this, ReplyActivity.class);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);

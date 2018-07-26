@@ -89,6 +89,8 @@ public class ChatActivity extends AppCompatActivity{
         mFirebaseDatabaseReference.child("volunteers").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                //get current user's profile pic and store in shared preferences. To be saved later to Firebase
                 String profilePic = dataSnapshot.child(userId).child("imageUrl").getValue().toString();
                 editor.putString("userDp", profilePic);
                 editor.apply();
@@ -139,7 +141,7 @@ public class ChatActivity extends AppCompatActivity{
                 }
 
                viewHolder.messengerTextView.setText(message.getSender());
-                String dp = sharedPreferences.getString("userDp","");
+                String dp = message.getProfilePic();
                 if(!dp.equals("")){
                     Bitmap userPic = UtilityFunctions.decodeFromFirebaseBase64(dp);
                     Bitmap circularDp = UtilityFunctions.getCircleBitmap(UtilityFunctions.getResizedBitmap(userPic, 400,400));
@@ -181,8 +183,8 @@ public class ChatActivity extends AppCompatActivity{
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String sender = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("name").getValue().toString();
                     String text = mMessageEditText.getText().toString().trim();
-
-                    ChatMessages chatMessages = new ChatMessages(text, sender, null);
+                    String dp = sharedPreferences.getString("userDp","");
+                    ChatMessages chatMessages = new ChatMessages(text, sender, null, dp);
                     FirebaseDatabase.getInstance().getReference().child("messages").push().setValue(chatMessages);
                     mMessageEditText.setText("");
                 }
@@ -245,8 +247,9 @@ public class ChatActivity extends AppCompatActivity{
         dr.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String dp = sharedPreferences.getString("userDp","");
                 String sender = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("name").getValue().toString();
-                ChatMessages chatMessages = new ChatMessages(null, sender, imageEncoded);
+                ChatMessages chatMessages = new ChatMessages(null, sender, imageEncoded, dp);
                 FirebaseDatabase.getInstance().getReference().child("messages").push().setValue(chatMessages);
             }
 
