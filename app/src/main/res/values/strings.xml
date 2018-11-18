@@ -60,8 +60,19 @@
     <string name="title_activity_accident_map">Accident Location</string>
     <string name="send_msg">Send</string>
     <string name="cancel">Cancel</string>
-    <string name="hint" >reply to sender</string>
+    <string name="hint">reply to sender</string>
     <string name="title_activity_notification">Reply Notification</string>
     <string name="action_reply"><![CDATA[<b><font color=#128c7e>Reply</font></b>]]></string>
     <string name="action_call"><![CDATA[<b><font color=#128c7e>Call</font></b>]]></string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="other">Other</string>
+    <string name="about_us">About Us</string>
+    <string name="follow_on_twitter">follow on Twitter</string>
+    <string name="follow_on_facebook">follow on facebook</string>
+    <string name="openDrawer">Open navigation drawer</string>
+    <string name="closeDrawer">Close navigation drawer</string>
+    <string name="urgentcare_website">www.urgentcare.info</string>
 </resources>

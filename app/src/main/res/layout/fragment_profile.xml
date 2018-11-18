@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--This is the parent layout  -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".VolunteerHomeActivity">
+    tools:context=".ProfileFragment">
 
-
+    <!--This is the top part with the image with a black background-->
     <ImageView
         android:id="@+id/header_cover_image"
         android:layout_width="match_parent"
@@ -17,6 +18,7 @@
         android:src="@drawable/nav_menu_header_bg"
         app:srcCompat="@drawable/nav_menu_header_bg" />
 
+    <!--this will contain the circular Image where the profile pic will be stored-->
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:clickable="true"
@@ -31,8 +33,10 @@
         android:elevation="5dp"
         android:padding="20dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/man" />
+        android:src="@drawable/man"
+        android:focusable="true" />
 
+    <!--this is layout with the red backround-->
     <RelativeLayout
         android:id="@+id/profile_layout"
         android:layout_width="match_parent"
@@ -42,7 +46,7 @@
         android:elevation="4dp"
         android:paddingBottom="24dp">
 
-
+        <!--this is the image view with the pencil-->
         <ImageView
             android:id="@+id/edit_photo"
             android:layout_width="wrap_content"
@@ -52,8 +56,10 @@
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
             android:clickable="true"
-            android:src="@android:drawable/ic_menu_edit" />
+            android:src="@android:drawable/ic_menu_edit"
+            android:focusable="true" />
 
+        <!--this is the textview which contains the text "loading...."-->
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
@@ -66,6 +72,7 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
+    <!--this is the layout which will contain the volunteers details like email, phone-->
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -77,9 +84,12 @@
         android:paddingBottom="20dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-
         android:paddingTop="20dp">
 
+        <!--NOTE: TextViews are usually used to display text data-->
+        <!--NOTE:EditTexts are usually used for text input-->
+        <!--NOTE:ImageViews are usually used to display images-->
+        <!--this text view which will display the email-->
         <TextView
             android:id="@+id/user_email"
             android:layout_width="wrap_content"
@@ -90,8 +100,10 @@
             android:clickable="true"
             android:text="Email: "
             android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent" />
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:focusable="true" />
 
+        <!--this text view which will display the contact-->
         <TextView
             android:id="@+id/user_contact"
             android:layout_width="wrap_content"
@@ -103,8 +115,10 @@
             android:text="Phone: "
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_email" />
+            app:layout_constraintTop_toBottomOf="@+id/user_email"
+            android:focusable="true" />
 
+        <!--this text view which will display the location-->
         <TextView
             android:id="@+id/user_location"
             android:layout_width="wrap_content"
@@ -115,17 +129,19 @@
             android:text="Location:"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_contact" />
+            app:layout_constraintTop_toBottomOf="@+id/user_contact"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:text="@string/loading"
             android:clickable="true"
             app:layout_constraintLeft_toRightOf="@+id/user_email"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/contact"
@@ -137,7 +153,8 @@
             android:clickable="true"
             android:text="@string/loading"
             app:layout_constraintLeft_toRightOf="@+id/user_contact"
-            app:layout_constraintTop_toBottomOf="@+id/email" />
+            app:layout_constraintTop_toBottomOf="@+id/email"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/location"
@@ -148,7 +165,8 @@
             android:text="@string/loading"
             android:clickable="true"
             app:layout_constraintLeft_toRightOf="@+id/user_location"
-            app:layout_constraintTop_toBottomOf="@+id/user_contact"/>
+            app:layout_constraintTop_toBottomOf="@+id/user_contact"
+            android:focusable="true" />
     </android.support.constraint.ConstraintLayout>
 
 </RelativeLayout>

@@ -86,12 +86,15 @@ public class ChatActivity extends AppCompatActivity{
         // New child entries
         DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        mFirebaseDatabaseReference.child("volunteers").addValueEventListener(new ValueEventListener() {
+        mFirebaseDatabaseReference.child("volunteers").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 //get current user's profile pic and store in shared preferences. To be saved later to Firebase
                 String profilePic = dataSnapshot.child(userId).child("imageUrl").getValue().toString();
+                String sender = dataSnapshot.child(userId).child("name").getValue().toString();
+
+                editor.putString("sender", sender);
                 editor.putString("userDp", profilePic);
                 editor.apply();
             }
@@ -173,27 +176,19 @@ public class ChatActivity extends AppCompatActivity{
         mMessageEditText = findViewById(R.id.messageEditText);
         mSendButton = findViewById(R.id.sendButton);
 
+
+        // this will send the text messages
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-            DatabaseReference ref  = FirebaseDatabase.getInstance().getReference().child("volunteers");
-                ref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    String sender = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("name").getValue().toString();
-                    String text = mMessageEditText.getText().toString().trim();
-                    String dp = sharedPreferences.getString("userDp","");
-                    ChatMessages chatMessages = new ChatMessages(text, sender, null, dp);
-                    FirebaseDatabase.getInstance().getReference().child("messages").push().setValue(chatMessages);
-                    mMessageEditText.setText("");
-                }
+                String sender = sharedPreferences.getString("sender", "Anonymous");
+                String text = mMessageEditText.getText().toString().trim();
+                String dp = sharedPreferences.getString("userDp","");
+                ChatMessages chatMessages = new ChatMessages(text, sender, null, dp);
+                FirebaseDatabase.getInstance().getReference().child("messages").push().setValue(chatMessages);
+                mMessageEditText.setText("");
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
         }});
 
         //add listener to add button
@@ -224,7 +219,7 @@ public class ChatActivity extends AppCompatActivity{
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == VolunteerHomeActivity.RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == ChatActivity.RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             encodeBitmapAndSaveToFirebase(imageBitmap);
@@ -242,22 +237,11 @@ public class ChatActivity extends AppCompatActivity{
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         final String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+        String sender = sharedPreferences.getString("sender", "Anonymous");
+        String dp = sharedPreferences.getString("userDp","");
+        ChatMessages chatMessages = new ChatMessages(null, sender, imageEncoded, dp);
+        FirebaseDatabase.getInstance().getReference().child("messages").push().setValue(chatMessages);
 
-        DatabaseReference dr = FirebaseDatabase.getInstance().getReference().child("volunteers");
-        dr.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String dp = sharedPreferences.getString("userDp","");
-                String sender = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("name").getValue().toString();
-                ChatMessages chatMessages = new ChatMessages(null, sender, imageEncoded, dp);
-                FirebaseDatabase.getInstance().getReference().child("messages").push().setValue(chatMessages);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
 

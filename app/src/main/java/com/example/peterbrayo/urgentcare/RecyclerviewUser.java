@@ -1,5 +1,7 @@
 package com.example.peterbrayo.urgentcare;
 
+import java.util.ArrayList;
+
 public class RecyclerviewUser {
     private String name;
     private String contact;
@@ -43,5 +45,15 @@ public class RecyclerviewUser {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public boolean imageExists(){
+        if(!getImage().equals("")){
+            return true;
+        }
+        else{
+            return false;
+        }
+//        !getImage().equals("");
     }
 }

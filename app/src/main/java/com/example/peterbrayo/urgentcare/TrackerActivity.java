@@ -48,7 +48,7 @@ public class TrackerActivity extends AppCompatActivity {
     }
 
     private void startVolunteerActivity(){
-        startActivity(new Intent( TrackerActivity.this, VolunteerHomeActivity.class));
+        startActivity(new Intent( TrackerActivity.this, VolunteerActivity.class));
     }
 
     @Override

@@ -16,13 +16,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 import java.util.ArrayList;
+
+import static com.example.peterbrayo.urgentcare.UtilityFunctions.decodeFromFirebaseBase64;
 import static com.example.peterbrayo.urgentcare.UtilityFunctions.getResizedBitmap;
-import static com.example.peterbrayo.urgentcare.VolunteerHomeActivity.decodeFromFirebaseBase64;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyHolder> {
+
+    //this is the activity which will call the RecyclerAdapter
     private Context c;
+
+    //this is the source of the data
     private ArrayList<RecyclerviewUser> arrayList;
 
+
+    //constructor for adapter //used to initiliaze the Context and ArrayList
     RecyclerAdapter(Context c, ArrayList<RecyclerviewUser> arrayList){
         Log.i("adapter", "constructor");
         this.c = c;
@@ -34,6 +41,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyHold
     INITIALIZE VIEWHOLDER
      */
 
+
+    //this method will create the layout for each row
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -45,13 +54,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyHold
     /*
     BIND
      */
+
+    //this method will attach the corresponding data to each View
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
         Log.i("onBind",arrayList.get(position).getContact());
         RecyclerviewUser user = arrayList.get(position);
 
         //decode image-url in firebase from string to bitmap
-        Bitmap imageBitmap = decodeFromFirebaseBase64(user.getImage());
+        if(user.imageExists()) {
+            Bitmap imageBitmap = decodeFromFirebaseBase64(user.getImage());
+            holder.img.setImageBitmap(getResizedBitmap(imageBitmap, 200, 220));
+        }
+
         final String phoneNum = user.getContact();
         holder.nameTxt.setText(user.getName());
         holder.phoneTxt.setText(phoneNum);
@@ -67,10 +82,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyHold
                 view.getContext().startActivity(callIntent);
             }
         });
-        holder.img.setImageBitmap(getResizedBitmap(imageBitmap, 200,220));
+
         holder.ratingBar.setRating(user.getRating());
     }
 
+
+    //this function returns the number of items in the recycler view
     @Override
     public int getItemCount() {
         if(arrayList != null)
@@ -79,6 +96,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyHold
             return 0;
     }
 
+
+    //this inner class will hold the Views which will be filled later on
     /*
     VIEW HOLDER CLASS
      */

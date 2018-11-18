@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/c_email"
+            android:icon="@drawable/ic_email_black_24dp"
+            android:title="@string/activity_a"/>
+        <item
+            android:id="@+id/c_password"
+            android:icon="@drawable/icons8_password_reset_24"
+            android:title="@string/activity_b"/>
+        <item
+            android:id="@+id/c_sign_out"
+            android:icon="@drawable/icons8_sign_out_24"
+            android:title="@string/activity_c"/>
+        <item
+            android:id="@+id/delete_account"
+            android:icon="@drawable/icons8_delete_user_24"
+            android:title="@string/activity_d"/>
+    </group>
+
+    <item
+        android:title="@string/other">
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/about_us"
+                    android:icon="@drawable/icons8_about_24"
+                    android:title="@string/about_us"/>
+                <item
+                    android:icon="@drawable/icons8_twitter_24"
+                    android:id="@+id/f_twitter"
+                    android:title="@string/follow_on_twitter"/>
+
+                <item
+                    android:id="@+id/f_facebook"
+                    android:icon="@drawable/icons8_facebook_f_24"
+                    android:title="@string/follow_on_facebook"/>
+
+            </group>
+        </menu>
+    </item>
+
+</menu>

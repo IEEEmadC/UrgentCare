@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
                     public void onClick(View v){
                 if(userType.getCheckedRadioButtonId()==R.id.subscriber){
-                    startActivity(new Intent(MainActivity.this, VolunteerListView.class));
+                    startActivity(new Intent(MainActivity.this, VictimActivity.class));
 
                 }
                 else if(userType.getCheckedRadioButtonId()==R.id.volunteer)

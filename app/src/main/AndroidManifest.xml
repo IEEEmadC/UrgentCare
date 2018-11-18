@@ -14,9 +14,8 @@
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/MyMaterialTheme">
         <activity
             android:name=".SplashScreen"
             android:configChanges="orientation|screenSize">
@@ -35,9 +34,6 @@
         <activity
             android:name=".ResetPasswordActivity"
             android:label="Reset Password" />
-        <activity
-            android:name=".VolunteerHomeActivity"
-            android:label="Profile" />
         <activity
             android:name=".MainActivity"
             android:label="Select User" />
@@ -66,24 +62,23 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".VolunteersMapView"
-            android:label="@string/title_activity_volunteers_map_view" />
-        <activity
-            android:name=".VolunteerListView"
-            android:label="Available Volunteers" />
-        <activity
             android:name=".ChatActivity"
             android:label="Chat Screen" />
         <activity
             android:name=".AccidentMapActivity"
             android:label="@string/title_activity_accident_map" />
-        <activity android:name=".ReplyActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.custom"
+        <activity
+            android:name=".ReplyActivity"
+            android:excludeFromRecents="true"
             android:label="@string/title_activity_notification"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden"
             android:launchMode="singleInstance"
-            android:excludeFromRecents="true" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.custom"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity android:name=".NearbyVolunteers" />
+        <activity android:name=".VolunteerActivity" />
+        <activity android:name=".VictimActivity"
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>

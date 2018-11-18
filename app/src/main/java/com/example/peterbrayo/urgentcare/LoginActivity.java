@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         Log.i("after firebse", "here");
 
         if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(LoginActivity.this, VolunteerHomeActivity.class));
+            startActivity(new Intent(LoginActivity.this, VolunteerActivity.class));
             finish();
         }
         Log.i("execution one", "here");

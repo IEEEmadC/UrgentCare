@@ -1,16 +1,21 @@
 package com.example.peterbrayo.urgentcare;
 
-import android.content.Intent;
+
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -18,78 +23,105 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.HashMap;
 
-public class VolunteersMapView extends FragmentActivity implements OnMapReadyCallback {
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link MapFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class MapFragment extends Fragment implements OnMapReadyCallback {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
     static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private static final String TAG = VolunteersMapView.class.getSimpleName();
+    private static final String TAG = VictimActivity.class.getSimpleName();
     private HashMap<String, Marker> mMarkers = new HashMap<>();
     private GoogleMap mMap;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_volunteers_map_view);
-
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
 
 
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.subscriber_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if(id == R.id.volunteer_list_view){
-            startActivity(new Intent(VolunteersMapView.this, VolunteerListView.class));
-        }
-
-        return super.onOptionsItemSelected(item);
+    public MapFragment() {
+        // Required empty public constructor
     }
 
     /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment MapFragment.
      */
+    // TODO: Rename and change types and number of parameters
+    public static MapFragment newInstance(String param1, String param2) {
+        MapFragment fragment = new MapFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+
+
+        return inflater.inflate(R.layout.fragment_map, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+//        SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
+
+        MapView mapView = view.findViewById(R.id.map);
+        if(mapView!=null){
+            mapView.onCreate(null);
+            mapView.onResume();
+            mapView.getMapAsync(this);
+        }
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        MapsInitializer.initialize(getActivity());
         mMap = googleMap;
         mMap.setMaxZoomPreference(16);
         Log.i(TAG, "onMapReady: ");
         setUpMap();
-        loginToFirebase();
+        subscribeToUpdates();
     }
 
     private void subscribeToUpdates() {
         Log.i(TAG, "subscribeToUpdates()");
         String path = getString(R.string.firebase_path);
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(path);
+        String url = "https://e-charger-196317.firebaseio.com/";
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReferenceFromUrl(url).child(path);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -107,42 +139,17 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-    private void loginToFirebase() {
-        String email = getString(R.string.firebase_email);
-        String password = getString(R.string.firebase_password);
-
-        // Authenticate with Firebase and subscribe to updates
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(
-                email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    subscribeToUpdates();
-                    //displayMakers();
-                    Log.d(TAG, "firebase auth success");
-                } else {
-                    Log.d(TAG, "firebase auth failed");
-                }
-            }
-        });
-    }
-
     private void setMarker(DataSnapshot dataSnapshot) {
-
-
-
         Log.i(TAG, "dataSnapshot.getKey(): " + dataSnapshot.getChildrenCount());
         LatLng location;
-
-
         Iterable<DataSnapshot> users = dataSnapshot.getChildren();
 
         for (DataSnapshot ds : users) {
             Log.i("children",ds.getKey());
 
-                double lat = Double.parseDouble(ds.child("location").child("latitude").getValue().toString());
-                double lon = Double.parseDouble(ds.child("location").child("longitude").getValue().toString());
-                String name = ds.child("name").getValue().toString();
+            double lat = Double.parseDouble(ds.child("location").child("latitude").getValue().toString());
+            double lon = Double.parseDouble(ds.child("location").child("longitude").getValue().toString());
+            String name = ds.child("name").getValue().toString();
 
             location = new LatLng(lat, lon);
 
@@ -167,9 +174,9 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
     }
 
     private void setUpMap() {
-        if (ActivityCompat.checkSelfPermission(this,
+        if (ActivityCompat.checkSelfPermission(getActivity(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]
+            ActivityCompat.requestPermissions(getActivity(), new String[]
                     {android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
         }
         else{
@@ -177,5 +184,6 @@ public class VolunteersMapView extends FragmentActivity implements OnMapReadyCal
             mMap.setMyLocationEnabled(true);
         }
     }
+
 
 }

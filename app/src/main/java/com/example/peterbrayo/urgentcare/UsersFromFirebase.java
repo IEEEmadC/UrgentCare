@@ -16,17 +16,22 @@ public class UsersFromFirebase {
 
     public ArrayList<RecyclerviewUser> getUsersFromFirebase() {
         ArrayList<RecyclerviewUser> arrayList = new ArrayList<>();
-
+        RecyclerviewUser user;
+        String imageUrl;
         Iterable<DataSnapshot> users = dataSnapshot.getChildren();
         for (DataSnapshot ds : users) {
             Log.i("children", ds.getKey());
-
-            String imageUrl = ds.child("imageUrl").getValue().toString();
             String name = ds.child("name").getValue().toString();
             String contact = ds.child("contact").getValue().toString();
             int rating = new Random().nextInt(6);
 
-            RecyclerviewUser user = new RecyclerviewUser(name, contact, rating, imageUrl);
+            if(ds.child("imageUrl").exists()) {
+                imageUrl = ds.child("imageUrl").getValue().toString();
+                user = new RecyclerviewUser(name, contact, rating, imageUrl);
+            }
+            else {
+                user = new RecyclerviewUser(name, contact, rating, "");
+            }
             arrayList.add(user);
         }
         return arrayList;

@@ -37,9 +37,9 @@ public class NotificationService extends FirebaseMessagingService {
         sharedPreferences = getSharedPreferences(LOCATION, Context.MODE_PRIVATE);
 
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.notification_logo);
-        Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
-        Bitmap circularBitmap = getCircleBitmap(bitmap);
+//        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.notification_logo);
+//        Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+//        Bitmap circularBitmap = getCircleBitmap(bitmap);
         Intent resultIntent = new Intent(this, ReplyActivity.class);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -51,6 +51,8 @@ public class NotificationService extends FirebaseMessagingService {
 
         //notification without image, to volunteers
         String NOTIFICATION_WITH_PIC = "notificationWithPic";
+
+
         if(remoteMessage.getData().get("notificationType").equals(NOTIFICATION_WITHOUT_PIC)){
             String content = remoteMessage.getData().get("title");
         NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(R.drawable.ic_reply_black_24dp, Html.fromHtml(getString(R.string.action_reply)), pendingIntent)
@@ -64,8 +66,8 @@ public class NotificationService extends FirebaseMessagingService {
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
-                .setSmallIcon(R.drawable.hospital_notification_small_icon)
-                .setLargeIcon(circularBitmap);
+                .setSmallIcon(R.drawable.hospital_notification_small_icon);
+                //.setLargeIcon(circularBitmap);
 
         builder.addAction(replyAction);
 
@@ -77,107 +79,108 @@ public class NotificationService extends FirebaseMessagingService {
     }
 
     //notification showing reply from volunteer
-            else if (remoteMessage.getData().get("notificationType").equals(REPLY_NOTIFICATION)){
-            final SharedPreferences.Editor editor = sharedPreferences.edit();
+            else if (remoteMessage.getData().get("notificationType").equals(REPLY_NOTIFICATION)) {
+                final SharedPreferences.Editor editor = sharedPreferences.edit();
 
-            FirebaseDatabase.getInstance().getReference().child("replies").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    editor.putString("repName",dataSnapshot.child("name").getValue().toString());
-                    editor.putString("repCont",dataSnapshot.child("contact").getValue().toString());
-                    editor.putString("repIm",dataSnapshot.child("image").getValue().toString());
-                    editor.apply();
+                FirebaseDatabase.getInstance().getReference().child("replies").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        editor.putString("repName",dataSnapshot.child("name").getValue().toString());
+                        editor.putString("repCont",dataSnapshot.child("contact").getValue().toString());
+                        if(dataSnapshot.child("image").exists())
+                        editor.putString("repIm",dataSnapshot.child("image").getValue().toString());
+
+                        editor.apply();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                String reply = remoteMessage.getData().get("reply");
+                String name = sharedPreferences.getString("repName", "Anonymous");
+                String image = sharedPreferences.getString("repIm", "");
+                String contact = sharedPreferences.getString("repCont","0700000000");
+
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + contact));
+
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
                 }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+                PendingIntent pIntent = PendingIntent.getActivity(this,0, callIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+
+                NotificationCompat.Action callAction = new NotificationCompat.Action.Builder(R.drawable.ic_call_black_24dp, Html.fromHtml(getString(R.string.action_call)), pIntent)
+                        .build();
+
+                @SuppressWarnings("deprecation") NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.hospital_notification_small_icon)
+                        .setContentTitle("Reply from " + name)
+                        .setContentText(reply)
+                        .addAction(callAction)
+                        .setSound(sound)
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(reply));
+
+                if(!image.equals("")){
+                    Bitmap dp = getResizedBitmap(decodeFromFirebaseBase64(image), 500, 500);
+                    Bitmap circularDp = getCircleBitmap(dp);
+                    builder.setLargeIcon(circularDp);
                 }
-            });
+                else {
+                    //builder.setLargeIcon(circularBitmap);
+                }
 
-            String reply = remoteMessage.getData().get("reply");
-            String name = sharedPreferences.getString("repName", "Anonymous");
-            String image = sharedPreferences.getString("repIm", "");
-            String contact = sharedPreferences.getString("repCont","0700000000");
-            Bitmap dp = getResizedBitmap(decodeFromFirebaseBase64(image), 500, 500);
-            Bitmap circularDp = getCircleBitmap(dp);
+                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-            Intent callIntent = new Intent(Intent.ACTION_CALL);
-            callIntent.setData(Uri.parse("tel:" + contact));
-            if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-
-            PendingIntent pIntent = PendingIntent.getActivity(this,0, callIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-            NotificationCompat.Action callAction = new NotificationCompat.Action.Builder(R.drawable.ic_call_black_24dp, Html.fromHtml(getString(R.string.action_call)), pIntent)
-                    .build();
-
-            @SuppressWarnings("deprecation") NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.hospital_notification_small_icon)
-                    .setContentTitle("Reply from " + name)
-                    .setContentText(reply)
-                    .addAction(callAction)
-                    .setSound(sound)
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setStyle(new NotificationCompat.BigTextStyle().bigText(reply));
-
-            if(!image.equals("")){
-                builder.setLargeIcon(circularDp);
-            }
-            else {
-                builder.setLargeIcon(circularBitmap);
-            }
-
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            if (notificationManager != null) {
-                notificationManager.cancel(NOTIFICATION_ID);
-                notificationManager.notify(NOTIFICATION_ID, builder.build());
-            }
+                if (notificationManager != null) {
+                    notificationManager.cancel(NOTIFICATION_ID);
+                    notificationManager.notify(NOTIFICATION_ID, builder.build());
+                }
             }
 
             //notification with image, to volunteer
-        else if(remoteMessage.getData().get("notificationType").equals(NOTIFICATION_WITH_PIC)){
-            final SharedPreferences.Editor editor = sharedPreferences.edit();
+                else if(remoteMessage.getData().get("notificationType").equals(NOTIFICATION_WITH_PIC)) {
+                    final SharedPreferences.Editor editor = sharedPreferences.edit();
 
-            NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(R.drawable.ic_reply_black_24dp, Html.fromHtml(getString(R.string.action_reply)), pendingIntent)
-                    .build();
+                    NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(R.drawable.ic_reply_black_24dp, Html.fromHtml(getString(R.string.action_reply)), pendingIntent)
+                            .build();
 
-            FirebaseDatabase.getInstance().getReference().child("imageNotifications").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    String imageUrl = dataSnapshot.child("imageUrl").getValue().toString();
-                    editor.putString("accidentPhoto", imageUrl);
-                    editor.apply();
-                }
+                    FirebaseDatabase.getInstance().getReference().child("imageNotifications").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            String imageUrl = dataSnapshot.child("imageUrl").getValue().toString();
+                            editor.putString("accidentPhoto", imageUrl);
+                            editor.apply();
+                        }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
-            });
+                        }
+                    });
 
-            String image = sharedPreferences.getString("accidentPhoto","");
-            Bitmap accidentBitmap = decodeFromFirebaseBase64(image);
+                    String image = sharedPreferences.getString("accidentPhoto","");
+                    Bitmap accidentBitmap = decodeFromFirebaseBase64(image);
+                    @SuppressWarnings("deprecation") NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.hospital_notification_small_icon)
+                            .setContentTitle("Accident Has Happened")
+                            .setContentText("Expand to view")
+                            .setSound(sound)
+                            .setPriority(NotificationCompat.PRIORITY_MAX)
+                            //.setLargeIcon(circularBitmap)
+                            .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(accidentBitmap).bigLargeIcon(null));
+                    builder.addAction(replyAction);
 
-            @SuppressWarnings("deprecation") NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.hospital_notification_small_icon)
-                    .setContentTitle("Accident Has Happened")
-                    .setContentText("Expand to view")
-                    .setSound(sound)
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setLargeIcon(circularBitmap)
-                    .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(accidentBitmap).bigLargeIcon(null));
-
-            builder.addAction(replyAction);
-
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            if (notificationManager != null) {
-                notificationManager.cancel(NOTIFICATION_ID);
-                notificationManager.notify(NOTIFICATION_ID,builder.build());
+                    NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                    if (notificationManager != null) {
+                        notificationManager.cancel(NOTIFICATION_ID);
+                        notificationManager.notify(NOTIFICATION_ID,builder.build());
+                    }
             }
-        }
     }
-
 }
