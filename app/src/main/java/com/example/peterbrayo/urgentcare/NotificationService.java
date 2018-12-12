@@ -2,6 +2,7 @@ package com.example.peterbrayo.urgentcare;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.RemoteInput;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -34,14 +35,21 @@ public class NotificationService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
 
         String LOCATION = "location";
+        String KEY_REPLY = "key_reply";
+        String LABEL = "Enter your reply here";
+
         sharedPreferences = getSharedPreferences(LOCATION, Context.MODE_PRIVATE);
+
+        RemoteInput remoteInput = new RemoteInput.Builder(KEY_REPLY)
+                                    .setLabel(LABEL)
+                                    .build();
 
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 //        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.notification_logo);
 //        Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
 //        Bitmap circularBitmap = getCircleBitmap(bitmap);
         Intent resultIntent = new Intent(this, ReplyActivity.class);
-        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 

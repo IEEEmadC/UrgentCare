@@ -28,6 +28,8 @@ public class ReplyActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_reply);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         String userId = auth.getCurrentUser().getUid();
@@ -55,8 +57,7 @@ public class ReplyActivity extends AppCompatActivity {
             }
         });
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reply);
+
 
         send = findViewById(R.id.buttonSend);
         cancel = findViewById(R.id.buttonCancel);

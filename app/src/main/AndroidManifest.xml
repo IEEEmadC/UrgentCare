@@ -62,9 +62,6 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".ChatActivity"
-            android:label="Chat Screen" />
-        <activity
             android:name=".AccidentMapActivity"
             android:label="@string/title_activity_accident_map" />
         <activity
@@ -77,8 +74,10 @@
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name=".NearbyVolunteers" />
         <activity android:name=".VolunteerActivity" />
-        <activity android:name=".VictimActivity"
-            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".VictimActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".NotificationReply"></activity>
     </application>
 
 </manifest>

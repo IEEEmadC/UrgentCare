@@ -18,7 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import static com.example.peterbrayo.urgentcare.VolunteersMapView.LOCATION_PERMISSION_REQUEST_CODE;
+import static com.example.peterbrayo.urgentcare.MapFragment.LOCATION_PERMISSION_REQUEST_CODE;
 
 public class AccidentMapActivity extends FragmentActivity implements OnMapReadyCallback {
 

@@ -51,7 +51,7 @@ public class ChatFragment extends Fragment {
     private static final String TAG = "ChatFragment";
     public static final String MESSAGES_CHILD = "messages";
     private static final int REQUEST_IMAGE_CAPTURE = 111;
-    private FirebaseRecyclerAdapter<ChatMessages, ChatActivity.MessageViewHolder> mFirebaseAdapter;
+    private FirebaseRecyclerAdapter<ChatMessages, MessageViewHolder> mFirebaseAdapter;
     private LinearLayoutManager mLinearLayoutManager;
     private RecyclerView mMessageRecyclerView;
     private ProgressBar mProgressBar;
@@ -177,17 +177,17 @@ public class ChatFragment extends Fragment {
         DatabaseReference messagesRef = mFirebaseDatabaseReference.child(MESSAGES_CHILD);
 
         FirebaseRecyclerOptions<ChatMessages> options = new FirebaseRecyclerOptions.Builder<ChatMessages>().setQuery(messagesRef, parser).build();
-        mFirebaseAdapter = new FirebaseRecyclerAdapter<ChatMessages, ChatActivity.MessageViewHolder>(options) {
+        mFirebaseAdapter = new FirebaseRecyclerAdapter<ChatMessages, MessageViewHolder>(options) {
 
             @NonNull
             @Override
-            public ChatActivity.MessageViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+            public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                return new ChatActivity.MessageViewHolder(inflater.inflate(R.layout.item_message, viewGroup, false));
+                return new MessageViewHolder(inflater.inflate(R.layout.item_message, viewGroup, false));
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull final ChatActivity.MessageViewHolder viewHolder, int position, ChatMessages message) {
+            protected void onBindViewHolder(@NonNull final MessageViewHolder viewHolder, int position, ChatMessages message) {
                 mProgressBar.setVisibility(ProgressBar.INVISIBLE);
 //                Log.i("onBindView", message.getImage());
                 if (message.getText() != null) {
