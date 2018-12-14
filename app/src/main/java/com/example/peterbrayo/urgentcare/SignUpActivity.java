@@ -111,12 +111,14 @@ public class SignUpActivity extends AppCompatActivity {
                                 } else {
                                     //get current created user's ID
                                     String userId =auth.getCurrentUser().getUid();
-                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                            .setDisplayName(name).build();
 
-                                    auth.getCurrentUser().updateProfile(profileUpdates);
+//                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+//                                            .setDisplayName(name).build();
+//
+//                                    auth.getCurrentUser().updateProfile(profileUpdates);
 
                                     //save user to Firebase Database using ID
+                                    FirebaseAuth.getInstance().signOut();
                                     saveUserToFirebase(name,email, contact, userId, reference);
                                     startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
                                     finish();

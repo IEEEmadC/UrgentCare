@@ -75,4 +75,6 @@
     <string name="openDrawer">Open navigation drawer</string>
     <string name="closeDrawer">Close navigation drawer</string>
     <string name="urgentcare_website">www.urgentcare.info</string>
+
+    <string name="server_key">AIzaSyCuRJAtfG9eSPMSILvoNNuWTDfOJA3XyHw</string>
 </resources>
