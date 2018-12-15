@@ -1,19 +1,31 @@
 # UrgentCare
 
-# Overview
-Android App that alerts registered volunteers about an accident in case a victim gets one.
-A Victim or any other person at the scene send notifications to all registered volunteers.
-The notifications can be in form of plain text or an image of the current situation at the scene.
-When a volunteer recieves the notification, he can reply back and also gets a Map View of the location of the accident.
-The volunteer can also have a group chat with the registered volunteers as they interact on the current situation at the scene.
+#DESCRIPTION OF THE APP
+#Usefulness
+The app will be used to the reduce high accident death rates resulting from delayed attendance to victims.
 
-# Development
-The App strongly uses the Firebase API to implement alot of functionalities including the chat which uses the Firebase Realtime Database.
-Firebase Cloud Messaging (FCM) was used in implementing the notifications.
-The Cloud Functions that handle the notifications were all written in JavaScript.
-Firebase Authentication was used to implement user logins and registrations.
-Firebase Realtime Database stored most of the information about users and other data required to implement the App's functionalities
+#Technical Approach
+The app can be used by two types of users: the victim and the volunteer.
+The volunteer registers and his details are stored in the database. 
+The victim part can be used by the person involved in an accident or a nearby person at the scene in case the victim isn’t in position to use the phone due to a terrible accident. The person can send a text notification or an image notification with an image of the current scene, to volunteers.
+The volunteers will view the notification and can reply with a message which is sent to the sender. The reply message will include the volunteers phone number which can be used to contact them. After the reply is sent, the volunteer is redirected to a Google maps screen with the location of the accident
+The volunteers can in turn start up a group chat and be informed about the current scene of the accident. The volunteers who are at the scene can also send photos of the current scene, to the group.
+The chat functionality will mainly enable volunteers to collaborate in attending to the person who has gotten the accident.
+The person at the victim part is also able to view a list of registered volunteers and their phone numbers. He can also be able to view nearby volunteers and also nearby medical centers within 10km of their current location. This can the person on which volunteer or medical center to contact first.
 
-# Credits
-Credit to the team work effort by the four members; Peter, Sheilah, Diana and Agnes
+#Tools used
+The app was built with Android Studio and in the Java programming language.
+Various APIs for example, Firebase API was used to store various information like the volunteer details, chat messages
+Google Places API was used to locate the nearby medical centers 10km with the user’s current location
+JavaScript was used to build the Firebase Cloud Functions that were used for sending notification messages
+
+#Youtube link
+https://youtu.be/Er1ZbnkakTg
+https://youtu.be/3-W3Lp7tlL8 (chat funcionality)
+
+| App File Name|Team Name|Short Description|License|Country|Arthur's Link |
+| ---          | ---     | ---             | ---   |---    | --- |
+| `https://github.com/pbwauyo/UrgentCare/blob/master/apk%20folder/urgentcare.apk` |Muk geeks|App for attending to accident victims in the shortest time possible|MIT|Uganda|`https://github.com/pbwauyo` |
+
+
 
