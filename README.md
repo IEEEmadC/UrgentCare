@@ -20,7 +20,7 @@ Google Places API was used to locate the nearby medical centers 10km with the us
 JavaScript was used to build the Firebase Cloud Functions that were used for sending notification messages
 
 # Youtube link
-https://youtu.be/Er1ZbnkakTg
+https://youtu.be/Er1ZbnkakTg (main functionalities)<br/>
 https://youtu.be/3-W3Lp7tlL8 (chat funcionality)
 
 | App File Name|Team Name|Short Description|License|Country|Arthur's Link |
